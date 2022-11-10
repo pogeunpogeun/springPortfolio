@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardChk">
+
+	<select id="getSelectAll" resultType="com.hhj.springPortfolio.boardChk.model.dto.BoardChkDTO">
+		select * from boardChk order by boardChkNo desc
+	</select>
+	<select id="getSelectOne" resultType="com.hhj.springPortfolio.boardChk.model.dto.BoardChkDTO">
+		select * from memo where boardChkNo = #{boardChkNo}
+	</select>
+	<insert id="setInsert"><!--  parameterType="" 생략가능 -->
+		insert into boardChk values (
+			seq_boardChk.nextval,
+			#{tbl},
+			#{tblName},
+			sysdate
+		)
+	</insert>	
+	<update id="setUpdate">
+		update boardChk set
+		tbl = #{tbl},
+		tblName = #{tblName}
+		where boardChkNo = #{boardChkNo}
+	</update>	
+	<delete id="setDelete">
+		delete from boardChk where boardChkNo = #{boardChkNo}
+	</delete>	
+</mapper>

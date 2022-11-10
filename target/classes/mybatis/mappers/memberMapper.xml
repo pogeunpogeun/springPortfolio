@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+<sql id="search">
+	<choose>
+		<when test="searchGubun == 'id_name'">
+			and (id like '%' || #{searchData} || '%' or name like '%' || #{searchData} || '%')
+		</when>
+		<when test="searchGubun != null and searchGubun != '' and searchData != null and searchData != '' ">
+			and (${searchGubun} like '%' || #{searchData} || '%')
+		</when>
+		<otherwise>
+		
+		</otherwise>
+	</choose>
+</sql>
+	<select id="getTotalRecord" resultType="int">
+		select count(*) from member where 1 = 1
+		<include refid="search"></include>
+	</select>
+	<select id="getSelectAll" resultType="com.hhj.springPortfolio.member.model.dto.MemberDTO">
+		 select * from (select A.*, Rownum rnum from (
+			select * from member where 1 = 1
+			<include refid="search"></include>
+		  <![CDATA[
+			order by no desc
+			) A) where rnum >= #{startRecord} and rnum <= #{lastRecord}
+		]]>
+	</select>
+	<select id="getSelectOne" resultType="com.hhj.springPortfolio.member.model.dto.MemberDTO">
+		select * from member where no = #{no}
+	</select>
+	<select id="getLogin" resultType="com.hhj.springPortfolio.member.model.dto.MemberDTO">
+		select no, name, nickname from member where id = #{id} and passwd = #{passwd}
+	</select>
+
+	<insert id="setInsert"><!--  parameterType="" 생략가능 -->
+		insert into member values (
+			seq_member.nextval, #{id}, #{passwd}, #{name}, #{nickname}, #{phone}, #{email}, #{jumin},
+			#{juso1}, #{juso2}, #{juso3}, #{juso4}, #{grade}, sysdate, #{attachInfo}
+		)
+	</insert>
+	
+	<update id="setUpdate">
+		update member set phone=#{phone}, email=#{email}, juso1=#{juso1}, juso2=#{juso2},
+		 juso3=#{juso3}, juso4=#{juso4}, grade=#{grade}, nickname=#{nickname} where no=#{no} and passwd=#{passwd}
+	</update>
+	
+	<delete id="setDelete">
+		delete from member where no=#{no} and passwd=#{passwd}
+	</delete>
+	<select id="idChk" resultType="int">
+		select count(*) from member where id=#{id}
+	</select>
+</mapper>

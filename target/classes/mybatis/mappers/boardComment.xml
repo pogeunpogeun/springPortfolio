@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardComment">
+	<select id="getSelectAllComment" resultType="com.hhj.springPortfolio.board.model.dto.BoardCommentDTO">
+		select * from boardComment where boardNo = #{boardNo} order by commentNo desc
+	</select>
+	<insert id="setInsertComment">
+		insert into boardComment values
+		(seq_boardComment.nextval,
+		#{boardNo},
+		#{writer},
+		#{content},
+		#{passwd},
+		#{memberNo},
+		sysdate	
+		)
+	</insert>
+	<delete id="setDeleteComment">
+		delete from boardComment where commentNo = #{commentNo}
+	</delete>
+</mapper>  

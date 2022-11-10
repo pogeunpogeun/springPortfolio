@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memo">
+
+	<select id="getSelectAll" resultType="com.hhj.springPortfolio.memo.model.dto.MemoDTO">
+		select * from memo order by no desc
+	</select>
+	<select id="getSelectOne" resultType="com.hhj.springPortfolio.memo.model.dto.MemoDTO">
+		select * from memo where no = #{no}
+	</select>
+	<insert id="setInsert"><!--  parameterType="" 생략가능 -->
+		insert into memo values (
+			seq_memo.nextval,
+			subject = #{subject},
+			writer = #{writer},
+			content = #{content},
+			sysdate
+		)
+	</insert>
+	
+	<update id="setUpdate">
+		update memo set
+		subject = #{subject},
+		content = #{content}
+		where no = #{no}
+	</update>
+	
+	<delete id="setDelete">
+		delete from memo where no=#{no}
+	</delete>
+	
+</mapper>

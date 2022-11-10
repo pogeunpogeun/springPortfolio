@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	<sql id="search">
+		<choose>
+			<when test="searchGubun == 'sub_wri'">
+				and (subject like '%' || #{searchData} || '%' or boardWriter like '%' || #{searchData} || '%')
+			</when>
+			<when test="searchGubun != null and searchGubun != '' and searchData != null and searchData != '' ">
+			and (${searchGubun} like '%' || #{searchData} || '%')
+			</when>
+			<otherwise>
+			
+			</otherwise>
+		</choose>
+	</sql>
+<select id="getTotalRecord" resultType="int">
+	select count(*) from board where 1 = 1 and tbl = 1
+	<include refid="search"></include>
+</select>
+<select id="getSelectAll" resultType="com.hhj.springPortfolio.board.model.dto.BoardDTO">
+	select * from (select A.*, Rownum rnum from (
+	select * from board where 1 = 1 and tbl = 1
+	<include refid="search"></include>
+  <![CDATA[
+	order by noticeNo desc, refNo desc, levelNo asc
+	) A) where rnum >= #{startRecord} and rnum <= #{lastRecord}
+]]>
+</select>
+<select id="getSelectOne" resultType="com.hhj.springPortfolio.board.model.dto.BoardDTO">
+	select * from (select b.*, LAG(no) OVER (order by noticeNo desc, refNo desc, levelNo asc) preNo, 
+	LAG(subject) OVER (order by noticeNo desc, refNo desc, levelNo asc) preSubject, 
+	LEAD(no) OVER (order by noticeNo desc, refNo desc, levelNo asc) nxtNo,
+	LEAD(subject) OVER (order by noticeNo desc, refNo desc, levelNo asc) nxtSubject
+	from board b where 1 = 1
+	<include refid="search"></include>
+	order by noticeNo desc, refNo desc, levelNo asc) where no = #{no}
+</select>
+<select id="getSelectAllBoardChk" resultType="com.hhj.springPortfolio.boardChk.model.dto.BoardChkDTO">
+	select * from boardChk order by boardChkNo
+</select>
+<select id="getSelectMember" resultType="com.hhj.springPortfolio.member.model.dto.MemberDTO">
+	select * from member where no = #{no}
+</select>
+<insert id="setInsert">
+	insert into board values 
+	(seq_board.nextval,
+	 #{num},
+	 #{tbl},
+	 #{writer},
+	 #{subject},
+	 #{content},
+	 #{email},
+	 #{passwd},
+	 #{refNo},
+	 #{stepNo},
+	 #{levelNo},
+	 #{parentNo},
+	 #{hit},
+	 #{memberNo},
+	 #{noticeNo},
+	 #{secretGubun},
+	 sysdate,
+	 #{boardWriter},
+	 #{attachInfo}
+	)
+</insert>
+<!-- <select id="getTblName" resultType="com.hhj.springPortfolio.board.model.dto.BoardDTO">
+	select b.subject, bc.tblName, bc.tbl
+	from board b, boardChk bc
+	where b.tbl = bc.tbl
+</select> -->
+<select id="viewPasswd" resultType="int">
+	select * from board where passwd = #{passwd}
+</select>
+<select id="getMaxNum" resultType="int">
+	select nvl(max(num), 0) maxValue from board
+</select>
+<select id="getMaxRefNo" resultType="int">
+	select nvl(max(refNo), 0) maxValue from board
+</select>
+<select id="getMaxNumRefNoNoticeNo" resultType="int">
+	select nvl(max(${gubun}), 0) maxValue from board
+</select>
+<update id="setUpdateHit">
+	update board set hit = (hit + 1) where no = #{no}
+</update>
+<update id="setUpdateRelevel">
+	update board set levelNo = (levelNo + 1) where refNo = #{refNo} 
+	<![CDATA[
+	and levelNo > #{levelNo}
+	]]>
+</update>
+</mapper>
