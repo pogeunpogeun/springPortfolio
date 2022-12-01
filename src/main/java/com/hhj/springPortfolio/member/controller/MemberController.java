@@ -396,11 +396,11 @@ public class MemberController {
 			String sessionName = resultDto.getNickname();
 			session.setAttribute("sessionNo", sessionNo);
 			session.setAttribute("sessionName", sessionName);
-			model.addAttribute("fileName", "login");
-			model.addAttribute("folderName", folderName);
+			model.addAttribute("fileName", "index");
+			model.addAttribute("folderName", "_home");
 			
 			if(sessionNo > 0) {
-				  return "redirect:/member/list";
+				  return "main" + "/main";
 			} else {
 				session.invalidate();
 				return "main" + "/main";
@@ -413,8 +413,10 @@ public class MemberController {
 				HttpSession session,
 				@ModelAttribute MemberDTO arguDto
 				) {
+				model.addAttribute("fileName", "index");
+				model.addAttribute("folderName", "_home");
 				session.invalidate();
-				return "redirect:/member/login";		
+				return "main" + "/main";		
 		}	
 	// download ---------------------------------------------------
 		@RequestMapping("/download")

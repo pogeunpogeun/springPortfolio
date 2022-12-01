@@ -17,18 +17,20 @@
 <title>Insert title here</title>
 </head>
 <body>
-<h2>회원목록</h2>
-<div style="width:50%; border:0px solid red; text-align:left;">
-* 총 회원 수 [${totalRecord }] 
-</div>
-<table border="1" width="50%">
-	<tr>
-		<th>순번</th>
-		<th>이름</th>
-		<th>등록일</th>
-		<th>비고</th>
-	</tr>
-		<c:if test="${list.size() == 0 }">
+<div class="container" style="margin-top:50px;">
+  <h2 style="font-weight:bold;">Members</h2>
+  <p>* 총 회원 수 [${totalRecord }] </p>            
+  <table class="table">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Option</th>
+      </tr>
+    </thead>
+    <tbody>
+     <c:if test="${list.size() == 0 }">
 		<tr>
 			<td colspan="4">
 			등록된 회원이 없습니다.
@@ -37,26 +39,25 @@
 		</c:if>
 		<c:forEach var="dto" items="${list }">
 		<tr>
-			<td align="center">${dto.no }</td>
-			<td align="center"><a href="#" onClick="move('view','${dto.no}');">${dto.name }</a></td>
-			<td align="center">${dto.regiDate }</td>
-			<td align="center">
+			<td>${dto.no }</td>
+			<td><a href="#" onClick="move('view','${dto.no}');">${dto.name }</a></td>
+			<td>${dto.regiDate }</td>
+			<td>
 				<a href="#" onClick="move('sujung','${dto.no}');">수정 
 				/
 				<a href="#" onClick="move('sakje','${dto.no}');">삭제
 		</tr>
 	</c:forEach>
-</table>
-</body>
-</html>
-<div style="border: 0px solid red; width: 50%; margin-top: 10px; margin-bottom:20px;" align="right">
-|
-<a href="list">전체목록</a>
-|
-<a href="#" onClick="move('chuga','');">등록</a>
-|
-</div>
-<div style="border: 0px solid red; width:50% margin-top:10px;" align="center">
+    </tbody>
+  </table>
+<ul class="nav justify-content-end">
+  <li class="nav-item">
+    <a class="nav-link" href="${path }/member/list">[전체목록]</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" onClick="move('chuga','');">[등록하기]</a>
+  </li>
+</ul>
 <form name="searchForm">
 <select name="searchGubun" id="searchGubun">
 <c:choose>
@@ -89,44 +90,44 @@
 &nbsp;
 <input type="text" name="searchData" id="searchData" value="${searchData }" style="width:150px">
 &nbsp;
-<button type="button" onClick="search();">검색</button>
+<button type="button" class="btn btn-dark btn-sm" onClick="search();">Search</button>
 </form>
-</div>
+<nav aria-label="Page navigation example">
+<ul class="pagination">
 <c:if test="${totalRecord > 0 }">
-<div style="boder:0px solid red; width: 80%; margin-top: 10px; align="center">
 	 <!-- ------------------------------------------------------------------------------ -->
 <c:if test="${totalRecord > 0 }">
 <c:set var="value1" value="list"></c:set>
-		<a href="#" onclick="goPage('${value1 }', '1');">[첫페이지]</a>
-		&nbsp;&nbsp;
-		<c:if test="${startPage > blockSize}">
-			<a href="#" onclick="goPage('${value1 }', '${startPage - blockSize }');">[이전10개]</a>
+  <c:if test="${startPage > blockSize}">
+		 <li class="page-item"><a class="page-link" href="#" onclick="goPage('${value1 }', '${startPage - blockSize }');">Previous</a></li>
 		</c:if>
 		<c:if test="${startPage <= blockSize}">
-			[이전10개]
-		</c:if>
-		&nbsp;	
+		<!-- <li class="page-item"><a class="page-link" href="#">Previous</a></li> -->
+	</c:if>
+    <li class="page-item"><a class="page-link" href="#" onclick="goPage('${value1 }', '1');">Previous</a></li>
 		<c:forEach var="i" begin="${startPage }" end="${lastPage }" step="1">
 			<c:if test="${i == pageNumber}">
-				[${i }]
+				<li class="page-item"><a class="page-link" href="#">${i }</a></li>
 			</c:if>
 			<c:if test="${i != pageNumber}">
-				<a href="#" onclick="goPage('${value1 }', '${i }');">${i }</a>
+				<li class="page-item"><a class="page-link" href="#" onclick="goPage('${value1 }', '${i }');">${i }</a></li>
 			</c:if>			    
 		</c:forEach>	
-		&nbsp;
 		<c:if test="${lastPage < totalPage}">
-			<a href="#" onclick="goPage('${value1 }', '${startPage + blockSize }');">[다음10개]</a>
+			<li class="page-item"><a class="page-link" href="#" onclick="goPage('${value1 }', '${startPage + blockSize }');">Next</a></li>
 		</c:if>
 		<c:if test="${lastPage >= totalPage}">
-			[다음10개]
+			<li class="page-item"><a class="page-link" href="#">Next</a></li>
 		</c:if>	
-		&nbsp;&nbsp;
-		<a href="#" onclick="goPage('${value1 }', '${totalPage }');">[끝페이지]</a>
+		 <%-- <a href="#" onclick="goPage('${value1 }', '${totalPage }');">[끝페이지]</a> --%>
 </c:if>
 	<!-- ------------------------------------------------------------------------------ --> 
-</div>
 </c:if>
+ </ul>
+</nav>
+</div>
+</body>
+</html>
 <script>
 	function move(value1, value2) {
 		location.href = value1 + "?no=" + value2 + "&pageNumber=" + ${pageNumber } + "&${searchQueryString }";
@@ -139,6 +140,6 @@
 		}
 	}
 	function goPage(value1,value2) {		
-		location.href = "list?pageNumber=" + value2 + "&${searchQueryString }";
+		location.href = "${path}/member/list?pageNumber=" + value2 + "&${searchQueryString }";
 	}
 </script>
